@@ -6,8 +6,6 @@ Processo de Desenvolvimento de Produtos
 
 Um método operacional para transformar oportunidades em produtos, validar hipóteses com o mercado e tomar decisões orientadas por evidências.
 
-## Acessar o Playbook
-
 ## [Acessar o Playbook](https://alltok.github.io/playbook/)
 
 O Alltok Playbook define o processo de desenvolvimento de produtos da Alltok, desde a identificação de oportunidades até a validação, construção, comercialização e evolução das soluções.
