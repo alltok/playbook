@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alltok — Processo de Desenvolvimento de Produtos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --background:#ffffff; --layer:#f4f4f4; --layer-2:#ffffff; --layer-accent:#e0e0e0;
+  --text:#161616; --text-2:#525252; --helper:#6f6f6f;
+  --border:#e0e0e0; --border-layer:#c6c6c6; --border-strong:#8d8d8d;
+  --interactive:#0f62fe; --link:#0f62fe; --focus:#0f62fe; --hover:#e8e8e8; --field:#f4f4f4;
+  --info:#0043ce; --info-bg:#edf5ff;
+  --shell:#161616; --shell-text:#f4f4f4; --shell-hover:#353535;
+  --nav-bg:#f4f4f4; --nav-active:#e0e0e0;
+  --tag-green-bg:#a7f0ba; --tag-green:#0e6027;
+  --tag-teal-bg:#9ef0f0; --tag-teal:#005d5d;
+  --tag-purple-bg:#e8daff; --tag-purple:#6929c4;
+  --tag-red-bg:#ffd7d9; --tag-red:#a2191f;
+  --tag-blue-bg:#d0e2ff; --tag-blue:#0043ce;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --background:#161616; --layer:#262626; --layer-2:#393939; --layer-accent:#393939;
+    --text:#f4f4f4; --text-2:#c6c6c6; --helper:#a8a8a8;
+    --border:#393939; --border-layer:#525252; --border-strong:#6f6f6f;
+    --interactive:#4589ff; --link:#78a9ff; --focus:#ffffff; --hover:#333333; --field:#262626;
+    --info:#4589ff; --info-bg:#262626;
+    --nav-bg:#161616; --nav-active:#393939;
+    --tag-green-bg:#044317; --tag-green:#a7f0ba;
+    --tag-teal-bg:#004144; --tag-teal:#9ef0f0;
+    --tag-purple-bg:#491d8b; --tag-purple:#e8daff;
+    --tag-red-bg:#750e13; --tag-red:#ffd7d9;
+    --tag-blue-bg:#002d9c; --tag-blue:#d0e2ff;
+  }
+}
+:root[data-theme="dark"]{
+  --background:#161616; --layer:#262626; --layer-2:#393939; --layer-accent:#393939;
+  --text:#f4f4f4; --text-2:#c6c6c6; --helper:#a8a8a8;
+  --border:#393939; --border-layer:#525252; --border-strong:#6f6f6f;
+  --interactive:#4589ff; --link:#78a9ff; --focus:#ffffff; --hover:#333333; --field:#262626;
+  --info:#4589ff; --info-bg:#262626;
+  --nav-bg:#161616; --nav-active:#393939;
+  --tag-green-bg:#044317; --tag-green:#a7f0ba;
+  --tag-teal-bg:#004144; --tag-teal:#9ef0f0;
+  --tag-purple-bg:#491d8b; --tag-purple:#e8daff;
+  --tag-red-bg:#750e13; --tag-red:#ffd7d9;
+  --tag-blue-bg:#002d9c; --tag-blue:#d0e2ff;
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px);}
+*,*::before,*::after{box-sizing:border-box;}
+body{margin:0;background:var(--background);color:var(--text);
+  font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.5;letter-spacing:0;}
+img,svg{max-width:100%;}
+a{color:var(--link);}
+:focus-visible{outline:2px solid var(--focus);outline-offset:-2px;}
+
+/* UI shell header */
+.header{position:fixed;top:0;left:0;right:0;z-index:20;background:var(--shell);color:var(--shell-text);
+  padding-top:env(safe-area-inset-top,0px);border-bottom:1px solid #393939;}
+.header-inner{height:48px;display:flex;align-items:center;}
+.header-name{font-size:14px;line-height:48px;padding:0 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.header-name b{font-weight:600;}
+.header-name span{color:#c6c6c6;}
+.icon-btn{width:48px;height:48px;border:0;background:transparent;color:var(--shell-text);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:none;}
+.icon-btn:hover{background:var(--shell-hover);}
+.icon-btn:focus-visible{outline:2px solid #fff;outline-offset:-2px;}
+.header .spacer{flex:1;}
+#menuBtn{display:none;}
+
+/* Side nav */
+.sidenav{position:fixed;top:calc(48px + env(safe-area-inset-top,0px));bottom:0;left:0;width:256px;background:var(--nav-bg);
+  border-right:1px solid var(--border);overflow-y:auto;padding:16px 0 calc(16px + env(safe-area-inset-bottom,0px));z-index:15;}
+.sidenav a{display:block;padding:8px 16px 8px 13px;border-left:3px solid transparent;color:var(--text-2);text-decoration:none;font-size:14px;line-height:18px;}
+.sidenav a:hover{background:var(--hover);color:var(--text);}
+.sidenav a.active{border-left-color:var(--interactive);background:var(--nav-active);color:var(--text);font-weight:600;}
+
+main{margin-left:256px;padding-top:48px;}
+.content{max-width:880px;padding:0 32px 96px;}
+@media (max-width:1055px){
+  #menuBtn{display:inline-flex;}
+  main{margin-left:0;}
+  .sidenav{transform:translateX(-100%);transition:transform 110ms cubic-bezier(.2,0,.38,.9);}
+  .sidenav.open{transform:none;box-shadow:0 2px 6px rgba(0,0,0,.3);}
+  .content{padding:0 16px 80px;}
+}
+@media (prefers-reduced-motion:reduce){.sidenav{transition:none;}}
+
+/* Hero */
+.hero{padding:64px 0 40px;border-bottom:1px solid var(--border);}
+.hero h1{font-weight:300;font-size:clamp(2.25rem,5.5vw,3.75rem);line-height:1.15;margin:0 0 16px;letter-spacing:0;}
+.hero p.lead{font-size:20px;line-height:28px;font-weight:300;color:var(--text-2);margin:0 0 24px;max-width:36em;}
+
+/* Sections */
+section{padding:48px 0 8px;}
+h2{font-size:28px;line-height:36px;font-weight:400;margin:0 0 16px;}
+h2 .num{color:var(--helper);margin-right:12px;font-weight:300;}
+h3{font-size:16px;line-height:22px;font-weight:600;margin:24px 0 8px;}
+p{margin:0 0 16px;max-width:42em;}
+.strong-line{font-size:20px;line-height:28px;font-weight:300;}
+
+/* Tags */
+.tag{display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:24px;font-size:12px;line-height:16px;font-weight:400;white-space:nowrap;
+  background:var(--layer-accent);color:var(--text);}
+.tag.green{background:var(--tag-green-bg);color:var(--tag-green);}
+.tag.teal{background:var(--tag-teal-bg);color:var(--tag-teal);}
+.tag.purple{background:var(--tag-purple-bg);color:var(--tag-purple);}
+.tag.red{background:var(--tag-red-bg);color:var(--tag-red);}
+.tag.blue{background:var(--tag-blue-bg);color:var(--tag-blue);}
+
+/* Structured list (rules) */
+.slist{border-top:1px solid var(--border);margin:8px 0 16px;}
+.slist .row{display:grid;grid-template-columns:minmax(160px,240px) 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--border);}
+.slist .row dt{font-weight:600;font-size:14px;line-height:20px;}
+.slist .row dd{margin:0;font-size:14px;line-height:20px;color:var(--text-2);}
+@media (max-width:671px){.slist .row{grid-template-columns:1fr;gap:4px;}}
+
+/* Progress indicator */
+.progress{list-style:none;margin:24px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));row-gap:8px;}
+.progress li{min-width:0;}
+.step{width:100%;text-align:left;background:transparent;border:0;color:var(--text);padding:0 8px 12px 0;cursor:pointer;font:inherit;}
+.step .bar{display:block;height:2px;background:var(--border-layer);margin-bottom:8px;}
+.step .lbl{overflow-wrap:anywhere;display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:18px;}
+.step svg{flex:none;width:16px;height:16px;margin-top:1px;fill:var(--interactive);}
+.step .sub{display:block;font-size:12px;line-height:16px;color:var(--helper);margin-left:24px;}
+.step[data-state="complete"] .bar,.step[data-state="current"] .bar{background:var(--interactive);}
+.step[data-state="current"] .bar{height:4px;margin-bottom:6px;}
+.step[data-state="incomplete"] svg{fill:var(--text-2);}
+.step:hover .lbl span{text-decoration:underline;}
+@media (max-width:671px){
+  .progress{grid-template-columns:1fr;row-gap:0;}
+  .step{display:grid;grid-template-columns:2px 1fr;gap:12px;padding:0;}
+  .step .bar{height:auto;margin:0;}
+  .step[data-state="current"] .bar{height:auto;width:4px;margin:0 0 0 -1px;}
+  .step .inner{padding:8px 0 12px;}
+}
+.stage-panel{background:var(--layer);margin:16px 0 8px;padding:24px;border-top:1px solid var(--border);}
+.stage-panel h3{font-size:20px;line-height:28px;font-weight:400;margin:0 0 16px;}
+.kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--border-layer);margin:0 0 20px;border:1px solid var(--border-layer);}
+.kv div{background:var(--layer-2);padding:12px 16px;}
+.kv .k{display:block;font-size:12px;line-height:16px;color:var(--helper);}
+.kv .v{display:block;font-size:16px;line-height:22px;margin-top:4px;}
+.kv .wide{grid-column:1 / -1;}
+@media (max-width:671px){.kv{grid-template-columns:1fr 1fr;}.stage-panel{padding:16px;}}
+.stage-panel p{font-size:14px;line-height:20px;}
+.stage-nav{display:flex;gap:1px;margin-top:8px;}
+
+/* Buttons */
+.btn{min-height:48px;padding:14px 64px 14px 16px;border:0;font:inherit;font-size:14px;line-height:18px;cursor:pointer;text-align:left;}
+.btn.primary{background:#0f62fe;color:#fff;}
+.btn.primary:hover{background:#0050e6;}
+.btn.secondary{background:#393939;color:#fff;}
+.btn.secondary:hover{background:#474747;}
+.btn.ghost{background:transparent;color:var(--link);padding:14px 16px;}
+.btn.ghost:hover{background:var(--hover);}
+.btn.danger-ghost{background:transparent;color:#da1e28;padding:14px 16px;}
+.btn.danger-ghost:hover{background:#da1e28;color:#fff;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+@media (max-width:671px){.stage-nav .btn{flex:1;padding-right:16px;}}
+
+/* Inline notification */
+.notice{display:flex;gap:12px;background:var(--info-bg);border-left:3px solid var(--info);padding:15px 16px;margin:16px 0;font-size:14px;line-height:20px;border:1px solid color-mix(in srgb,var(--info) 40%,transparent);border-left-width:3px;}
+.notice svg{flex:none;width:20px;height:20px;fill:var(--info);}
+.notice p{margin:0;}
+
+/* Accordion */
+details.acc{border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:16px 0;}
+details.acc summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;min-height:40px;padding:10px 16px 10px 0;font-size:14px;}
+details.acc summary::-webkit-details-marker{display:none;}
+details.acc summary:hover{background:var(--hover);}
+details.acc summary svg{width:16px;height:16px;fill:var(--text);transition:transform 110ms;}
+details.acc[open] summary svg{transform:rotate(180deg);}
+details.acc .acc-body{padding:0 0 16px;}
+
+/* Data table */
+.table-wrap{overflow-x:auto;margin:16px 0;}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px;line-height:20px;}
+th{background:var(--layer-accent);text-align:left;font-weight:600;padding:14px 16px;}
+td{padding:14px 16px;border-top:1px solid var(--border-layer);background:var(--layer);vertical-align:top;color:var(--text-2);}
+td:first-child{color:var(--text);white-space:nowrap;}
+tbody tr:hover td{background:var(--hover);}
+
+/* Flow line */
+.flow{background:var(--layer);padding:20px 24px;font-size:18px;line-height:28px;font-weight:300;margin:16px 0;border-left:3px solid var(--interactive);}
+
+/* Decision tiles */
+.decisions{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin:16px 0;}
+.decisions div{background:var(--background);padding:16px;}
+.decisions p{font-size:14px;line-height:20px;color:var(--text-2);margin:12px 0 0;}
+
+/* Bullets */
+ul.c{margin:0 0 16px;padding-left:20px;max-width:42em;}
+ul.c li{margin:0 0 8px;}
+
+/* Ledger form */
+.ledger-group{margin:24px 0 8px;}
+.ledger-group h3{margin:0 0 12px;}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 24px;}
+@media (max-width:671px){.fields{grid-template-columns:1fr;}}
+.field label{display:block;font-size:12px;line-height:16px;color:var(--text-2);margin-bottom:8px;}
+.field input,.field select,.field textarea{width:100%;height:40px;padding:0 16px;border:0;border-bottom:1px solid var(--border-strong);background:var(--field);color:var(--text);font:inherit;font-size:14px;border-radius:0;}
+.field textarea{height:auto;min-height:64px;padding:11px 16px;resize:vertical;}
+.field.wide{grid-column:1 / -1;}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--focus);outline-offset:-2px;}
+.ledger-actions{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:24px;}
+.save-state{font-size:12px;color:var(--helper);}
+footer.doc{margin-top:64px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:var(--helper);}
+.scrim{display:none;}
+@media (max-width:1055px){.scrim.show{display:block;position:fixed;inset:0;background:rgba(22,22,22,.5);z-index:14;}}
+
+/* Process diagram */
+.diagram{background:var(--layer);padding:24px;margin:24px 0 8px;}
+.diagram h3{margin:0 0 16px;font-size:20px;line-height:28px;font-weight:400;}
+.diagram svg{display:block;width:100%;height:auto;}
+.flow-m{display:none !important;max-width:400px;margin:0 auto;}
+@media (max-width:671px){.flow-d{display:none !important;}.flow-m{display:block !important;}.diagram{padding:16px;}}
+.d-box{fill:var(--layer-2);stroke:var(--border-strong);stroke-width:1;}
+.d-t{fill:var(--text);font-size:14px;font-weight:600;}
+.d-s{fill:var(--helper);font-size:12px;}
+.d-dec{fill:#0f62fe;}
+.d-dect{fill:#fff;font-size:14px;font-weight:600;}
+.d-decs{fill:#d0e2ff;font-size:12px;}
+.d-l{stroke:var(--text-2);stroke-width:1.5;fill:none;}
+.d-f{stroke:var(--text-2);stroke-width:1.25;stroke-dasharray:4 4;fill:none;}
+.d-loop{stroke:var(--interactive);stroke-width:1.5;stroke-dasharray:6 4;fill:none;}
+.d-head{fill:var(--text-2);}
+.d-gate{fill:var(--interactive);}
+.d-tag.green{fill:var(--tag-green-bg);}.d-tagt.green{fill:var(--tag-green);}
+.d-tag.teal{fill:var(--tag-teal-bg);}.d-tagt.teal{fill:var(--tag-teal);}
+.d-tag.purple{fill:var(--tag-purple-bg);}.d-tagt.purple{fill:var(--tag-purple);}
+.d-tag.red{fill:var(--tag-red-bg);}.d-tagt.red{fill:var(--tag-red);}
+.d-tag.blue{fill:var(--tag-blue-bg);}.d-tagt.blue{fill:var(--tag-blue);}
+.d-tagt{font-size:12px;}
+.legend{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:16px;font-size:12px;line-height:16px;color:var(--text-2);}
+.legend span{display:inline-flex;align-items:center;gap:8px;}
+.legend svg{width:28px;height:10px;display:inline-block !important;}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <button class="icon-btn" id="menuBtn" aria-label="Abrir navegação" aria-expanded="false" aria-controls="sidenav">
+      <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M4 6h24v2H4zM4 24h24v2H4zM4 12h24v2H4zM4 18h24v2H4z"/></svg>
+    </button>
+    <div class="header-name"><b>Alltok</b> <span>Sistema de Desenvolvimento de Produtos</span></div>
+    <div class="spacer"></div>
+    <button class="icon-btn" id="themeBtn" aria-label="Alternar tema claro e escuro">
+      <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16 2a14 14 0 1 0 0 28 14 14 0 0 0 0-28zm0 26V4a12 12 0 0 1 0 24z"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="sidenav" id="sidenav" aria-label="Seções do documento">
+  <a href="#proposito">1. Propósito</a>
+  <a href="#regras">2. Regras fundamentais</a>
+  <a href="#pipeline">3. Pipeline e etapas</a>
+  <a href="#decisoes">4. Decisões</a>
+  <a href="#stack">5. Stack tecnológica</a>
+  <a href="#metricas">6. Métricas por fase</a>
+  <a href="#capital">7. Capital e tempo</a>
+  <a href="#distribuicao">8. Distribuição</a>
+  <a href="#rituais">9. Rituais</a>
+  <a href="#portfolio">10. Portfólio</a>
+  <a href="#factory">11. Product Factory</a>
+  <a href="#equipe">12. Crescimento da equipe</a>
+  <a href="#resumo">13. Processo em uma página</a>
+  <a href="#ledger">Product Ledger</a>
+</nav>
+<div class="scrim" id="scrim"></div>
+
+<main>
+<div class="content">
+
+  <div class="hero">
+    <h1>Como a Alltok descobre, valida, constrói e decide sobre seus produtos</h1>
+    <p class="lead">Estratégia operacional de trabalho. Vale para todo produto e todo experimento da empresa, do primeiro rascunho de ideia até a decisão final.</p>
+    <span class="tag blue">Versão 1.3</span> <span class="tag">Outubro de 2026</span>
+  </div>
+
+  <section id="proposito">
+    <h2><span class="num">1</span>Propósito</h2>
+    <p class="strong-line">Maximizar aprendizado comercial por hora e por real investido, e não a quantidade de código produzido.</p>
+  </section>
+
+  <section id="regras">
+    <h2><span class="num">2</span>Regras fundamentais</h2>
+    <dl class="slist">
+      <div class="row"><dt>Problema antes de tecnologia</dt><dd>A tecnologia existe para resolver uma dor concreta de um cliente identificável.</dd></div>
+      <div class="row"><dt>Conversar antes de construir</dt><dd>Nenhum produto avança sem conversas diretas com quem tem o problema e com quem paga.</dd></div>
+      <div class="row"><dt>Produto pequeno</dt><dd>A primeira versão resolve uma única dor, para um único perfil de cliente.</dd></div>
+      <div class="row"><dt>Venda antes de escala</dt><dd>Primeiro provar que alguém paga; depois otimizar.</dd></div>
+      <div class="row"><dt>Critérios antes do experimento</dt><dd>Toda etapa tem critério de sucesso e de encerramento registrado antes de começar, e eles não mudam durante a etapa.</dd></div>
+      <div class="row"><dt>Uma aposta ativa</dt><dd>Pode haver várias ideias, mas só uma recebe a maior parte do tempo de desenvolvimento. A exceção controlada é a descoberta paralela durante RETENTION (seção 10).</dd></div>
+      <div class="row"><dt>Código é investimento</dt><dd>Toda funcionalidade precisa justificar seu custo de construção e de manutenção.</dd></div>
+    </dl>
+  </section>
+
+  <section id="pipeline">
+    <h2><span class="num">3</span>Pipeline e etapas</h2>
+    <p>Este é o único fluxo da Alltok. Nenhum produto pula etapas. Cada etapa tem prazo, teto de horas e um gate de saída; se o gate não for atingido dentro do prazo e do teto, o produto vai direto para DECISION.</p>
+
+    <div class="diagram"><h3>Fluxo do processo</h3><svg class="flow-d" viewBox="0 0 880 410" role="img" aria-labelledby="fdT"><title id="fdT">Fluxo do processo Alltok: sete etapas com gates de saída levando à decisão; gate não atingido leva direto à decisão; após a decisão, a próxima aposta recomeça em IDEA.</title><defs><marker id="da" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="d-head" d="M0 0L10 5L0 10z"/></marker></defs><rect class="d-box" x="30" y="36" width="140" height="64"/><text class="d-t" x="42" y="65.0">IDEA</text><text class="d-s" x="42" y="82.0">1–2 dias</text><rect class="d-box" x="210" y="36" width="140" height="64"/><text class="d-t" x="222" y="65.0">PROBLEM</text><text class="d-s" x="222" y="82.0">3–5 dias</text><rect class="d-box" x="390" y="36" width="140" height="64"/><text class="d-t" x="402" y="65.0">VALIDATION</text><text class="d-s" x="402" y="82.0">14 dias</text><rect class="d-box" x="570" y="36" width="140" height="64"/><text class="d-t" x="582" y="65.0">MVP</text><text class="d-s" x="582" y="82.0">7–14 dias</text><rect class="d-box" x="30" y="160" width="140" height="64"/><text class="d-t" x="42" y="189.0">LAUNCH</text><text class="d-s" x="42" y="206.0">14 dias</text><rect class="d-box" x="210" y="160" width="140" height="64"/><text class="d-t" x="222" y="189.0">MONETIZATION</text><text class="d-s" x="222" y="206.0">30 dias</text><rect class="d-box" x="390" y="160" width="140" height="64"/><text class="d-t" x="402" y="189.0">RETENTION</text><text class="d-s" x="402" y="206.0">60–90 dias</text><rect class="d-dec" x="750" y="36" width="120" height="188"/><text class="d-dect" x="810.0" y="128.0" text-anchor="middle">DECISION</text><text class="d-decs" x="810.0" y="146.0" text-anchor="middle">1 dia</text><line class="d-l" x1="170" y1="68.0" x2="208" y2="68.0" marker-end="url(#da)"/><rect class="d-gate" x="184.0" y="64.0" width="8" height="8" transform="rotate(45 188.0 68.0)"/><line class="d-l" x1="350" y1="68.0" x2="388" y2="68.0" marker-end="url(#da)"/><rect class="d-gate" x="364.0" y="64.0" width="8" height="8" transform="rotate(45 368.0 68.0)"/><line class="d-l" x1="530" y1="68.0" x2="568" y2="68.0" marker-end="url(#da)"/><rect class="d-gate" x="544.0" y="64.0" width="8" height="8" transform="rotate(45 548.0 68.0)"/><line class="d-l" x1="170" y1="192.0" x2="208" y2="192.0" marker-end="url(#da)"/><rect class="d-gate" x="184.0" y="188.0" width="8" height="8" transform="rotate(45 188.0 192.0)"/><line class="d-l" x1="350" y1="192.0" x2="388" y2="192.0" marker-end="url(#da)"/><rect class="d-gate" x="364.0" y="188.0" width="8" height="8" transform="rotate(45 368.0 192.0)"/><line class="d-l" x1="530" y1="192.0" x2="748" y2="192.0" marker-end="url(#da)"/><rect class="d-gate" x="636.0" y="188.0" width="8" height="8" transform="rotate(45 640.0 192.0)"/><path class="d-l" d="M640.0 100V130.0H100.0V158" marker-end="url(#da)"/><rect class="d-gate" x="636.0" y="108" width="8" height="8" transform="rotate(45 640.0 112)"/><path class="d-f" d="M100.0 36V16H810.0V34" marker-end="url(#da)"/><line class="d-f" x1="280.0" y1="36" x2="280.0" y2="16"/><line class="d-f" x1="460.0" y1="36" x2="460.0" y2="16"/><line class="d-f" x1="640.0" y1="36" x2="640.0" y2="16"/><path class="d-f" d="M100.0 224V250H780V226" marker-end="url(#da)"/><line class="d-f" x1="280.0" y1="224" x2="280.0" y2="250"/><line class="d-f" x1="460.0" y1="224" x2="460.0" y2="250"/><text class="d-s" x="108" y="266">gate não atingido no prazo ou teto</text><path class="d-l" d="M850 224V284"/><line class="d-l" x1="98.0" y1="284" x2="850" y2="284"/><line class="d-l" x1="98.0" y1="284" x2="98.0" y2="298" marker-end="url(#da)"/><rect class="d-tag green" x="70.0" y="300" width="56" height="24" rx="12"/><text class="d-tagt green" x="98.0" y="316" text-anchor="middle">SCALE</text><text class="d-s" x="98.0" y="344" text-anchor="middle">Investir mais</text><line class="d-l" x1="274.0" y1="284" x2="274.0" y2="298" marker-end="url(#da)"/><rect class="d-tag teal" x="235.0" y="300" width="78" height="24" rx="12"/><text class="d-tagt teal" x="274.0" y="316" text-anchor="middle">MAINTAIN</text><text class="d-s" x="274.0" y="344" text-anchor="middle">Manter com pouco esforço</text><line class="d-l" x1="450.0" y1="284" x2="450.0" y2="298" marker-end="url(#da)"/><rect class="d-tag purple" x="424.0" y="300" width="52" height="24" rx="12"/><text class="d-tagt purple" x="450.0" y="316" text-anchor="middle">PIVOT</text><text class="d-s" x="450.0" y="344" text-anchor="middle">Volta para PROBLEM (máx. 2)</text><line class="d-l" x1="626.0" y1="284" x2="626.0" y2="298" marker-end="url(#da)"/><rect class="d-tag red" x="604.0" y="300" width="44" height="24" rx="12"/><text class="d-tagt red" x="626.0" y="316" text-anchor="middle">KILL</text><text class="d-s" x="626.0" y="344" text-anchor="middle">Encerrar</text><line class="d-l" x1="802.0" y1="284" x2="802.0" y2="298" marker-end="url(#da)"/><rect class="d-tag blue" x="777.0" y="300" width="50" height="24" rx="12"/><text class="d-tagt blue" x="802.0" y="316" text-anchor="middle">SOLD</text><text class="d-s" x="802.0" y="344" text-anchor="middle">Ativo vendido</text><line class="d-loop" x1="98.0" y1="354" x2="98.0" y2="380"/><line class="d-loop" x1="274.0" y1="354" x2="274.0" y2="380"/><line class="d-loop" x1="626.0" y1="354" x2="626.0" y2="380"/><line class="d-loop" x1="802.0" y1="354" x2="802.0" y2="380"/><path class="d-loop" d="M802.0 380H12V68.0H28" marker-end="url(#da)"/><text class="d-s" x="30" y="400">Próxima aposta: recomeça em IDEA</text></svg><svg class="flow-m" viewBox="0 0 360 868" role="img" aria-labelledby="fmT"><title id="fmT">Fluxo do processo Alltok em formato vertical.</title><defs><marker id="ma" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="d-head" d="M0 0L10 5L0 10z"/></marker></defs><rect class="d-box" x="40" y="16" width="220" height="48"/><text class="d-t" x="52" y="37.0">IDEA</text><text class="d-s" x="52" y="54.0">1–2 dias</text><line class="d-l" x1="150.0" y1="64" x2="150.0" y2="90" marker-end="url(#ma)"/><rect class="d-gate" x="146.0" y="72.0" width="8" height="8" transform="rotate(45 150.0 76.0)"/><rect class="d-box" x="40" y="92" width="220" height="48"/><text class="d-t" x="52" y="113.0">PROBLEM</text><text class="d-s" x="52" y="130.0">3–5 dias</text><line class="d-l" x1="150.0" y1="140" x2="150.0" y2="166" marker-end="url(#ma)"/><rect class="d-gate" x="146.0" y="148.0" width="8" height="8" transform="rotate(45 150.0 152.0)"/><rect class="d-box" x="40" y="168" width="220" height="48"/><text class="d-t" x="52" y="189.0">VALIDATION</text><text class="d-s" x="52" y="206.0">14 dias</text><line class="d-l" x1="150.0" y1="216" x2="150.0" y2="242" marker-end="url(#ma)"/><rect class="d-gate" x="146.0" y="224.0" width="8" height="8" transform="rotate(45 150.0 228.0)"/><rect class="d-box" x="40" y="244" width="220" height="48"/><text class="d-t" x="52" y="265.0">MVP</text><text class="d-s" x="52" y="282.0">7–14 dias</text><line class="d-l" x1="150.0" y1="292" x2="150.0" y2="318" marker-end="url(#ma)"/><rect class="d-gate" x="146.0" y="300.0" width="8" height="8" transform="rotate(45 150.0 304.0)"/><rect class="d-box" x="40" y="320" width="220" height="48"/><text class="d-t" x="52" y="341.0">LAUNCH</text><text class="d-s" x="52" y="358.0">14 dias</text><line class="d-l" x1="150.0" y1="368" x2="150.0" y2="394" marker-end="url(#ma)"/><rect class="d-gate" x="146.0" y="376.0" width="8" height="8" transform="rotate(45 150.0 380.0)"/><rect class="d-box" x="40" y="396" width="220" height="48"/><text class="d-t" x="52" y="417.0">MONETIZATION</text><text class="d-s" x="52" y="434.0">30 dias</text><line class="d-l" x1="150.0" y1="444" x2="150.0" y2="470" marker-end="url(#ma)"/><rect class="d-gate" x="146.0" y="452.0" width="8" height="8" transform="rotate(45 150.0 456.0)"/><rect class="d-box" x="40" y="472" width="220" height="48"/><text class="d-t" x="52" y="493.0">RETENTION</text><text class="d-s" x="52" y="510.0">60–90 dias</text><line class="d-l" x1="150.0" y1="520" x2="150.0" y2="546" marker-end="url(#ma)"/><rect class="d-gate" x="146.0" y="528.0" width="8" height="8" transform="rotate(45 150.0 532.0)"/><rect class="d-dec" x="40" y="548" width="220" height="48"/><text class="d-dect" x="52" y="569.0">DECISION</text><text class="d-decs" x="52" y="586.0">1 dia</text><line class="d-f" x1="260" y1="40.0" x2="300" y2="40.0"/><line class="d-f" x1="260" y1="116.0" x2="300" y2="116.0"/><line class="d-f" x1="260" y1="192.0" x2="300" y2="192.0"/><line class="d-f" x1="260" y1="268.0" x2="300" y2="268.0"/><line class="d-f" x1="260" y1="344.0" x2="300" y2="344.0"/><line class="d-f" x1="260" y1="420.0" x2="300" y2="420.0"/><line class="d-f" x1="260" y1="496.0" x2="300" y2="496.0"/><path class="d-f" d="M300 40.0V572.0H262" marker-end="url(#ma)"/><text class="d-s" x="308" y="244" transform="rotate(90 308 244)">gate não atingido</text><line class="d-l" x1="70" y1="596" x2="70" y2="798"/><line class="d-l" x1="70" y1="638" x2="90" y2="638" marker-end="url(#ma)"/><rect class="d-tag green" x="92" y="626" width="56" height="24" rx="12"/><text class="d-tagt green" x="120.0" y="642" text-anchor="middle">SCALE</text><text class="d-s" x="158" y="642">Investir mais</text><line class="d-l" x1="70" y1="678" x2="90" y2="678" marker-end="url(#ma)"/><rect class="d-tag teal" x="92" y="666" width="78" height="24" rx="12"/><text class="d-tagt teal" x="131.0" y="682" text-anchor="middle">MAINTAIN</text><text class="d-s" x="180" y="682">Manter com pouco esforço</text><line class="d-l" x1="70" y1="718" x2="90" y2="718" marker-end="url(#ma)"/><rect class="d-tag purple" x="92" y="706" width="52" height="24" rx="12"/><text class="d-tagt purple" x="118.0" y="722" text-anchor="middle">PIVOT</text><text class="d-s" x="154" y="722">Volta para PROBLEM (máx. 2)</text><line class="d-l" x1="70" y1="758" x2="90" y2="758" marker-end="url(#ma)"/><rect class="d-tag red" x="92" y="746" width="44" height="24" rx="12"/><text class="d-tagt red" x="114.0" y="762" text-anchor="middle">KILL</text><text class="d-s" x="146" y="762">Encerrar</text><line class="d-l" x1="70" y1="798" x2="90" y2="798" marker-end="url(#ma)"/><rect class="d-tag blue" x="92" y="786" width="50" height="24" rx="12"/><text class="d-tagt blue" x="117.0" y="802" text-anchor="middle">SOLD</text><text class="d-s" x="152" y="802">Ativo vendido</text><path class="d-loop" d="M70 798V834H14V40.0H38" marker-end="url(#ma)"/><text class="d-s" x="78" y="852">Próxima aposta: recomeça em IDEA</text></svg><div class="legend">
+<span><svg viewBox="0 0 28 10" aria-hidden="true"><rect class="d-gate" x="10" y="1" width="8" height="8" transform="rotate(45 14 5)"/></svg>Gate de saída</span>
+<span><svg viewBox="0 0 28 10" aria-hidden="true"><line class="d-l" x1="0" y1="5" x2="28" y2="5"/></svg>Gate atingido</span>
+<span><svg viewBox="0 0 28 10" aria-hidden="true"><line class="d-f" x1="0" y1="5" x2="28" y2="5"/></svg>Gate não atingido, vai para DECISION</span>
+<span><svg viewBox="0 0 28 10" aria-hidden="true"><line class="d-loop" x1="0" y1="5" x2="28" y2="5"/></svg>Próxima aposta</span>
+</div></div>
+    <p>Selecione uma etapa abaixo para ver os detalhes.</p>
+    <ol class="progress" id="progress" aria-label="Etapas do pipeline"></ol>
+    <div class="stage-panel" id="stagePanel" aria-live="polite"></div>
+
+    <div class="notice" role="note">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2a14 14 0 1 0 0 28 14 14 0 0 0 0-28zm0 6a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm4 16.13h-8v-2.26h2.87v-5.74H13v-2.26h4.13v8H20z"/></svg>
+      <p>Os números dos gates são padrões. Cada experimento pode ajustá-los no Ledger antes de iniciar (produtos B2B costumam ter menos clientes e ciclos mais longos; B2C, mais volume e conversões menores), mas nunca durante a etapa.</p>
+    </div>
+
+    <details class="acc">
+      <summary>Ver todas as etapas em tabela <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 22 6 12l1.4-1.4 8.6 8.6 8.6-8.6L26 12z"/></svg></summary>
+      <div class="acc-body"><div class="table-wrap"><table>
+        <thead><tr><th>Etapa</th><th>Prazo</th><th>Teto (h)</th><th>Gate de saída (padrão)</th></tr></thead>
+        <tbody id="stageTable"></tbody>
+      </table></div></div>
+    </details>
+  </section>
+
+  <section id="decisoes">
+    <h2><span class="num">4</span>Decisões e Definition of Done</h2>
+    <p>Todo experimento termina com uma decisão explícita e registrada.</p>
+    <div class="decisions">
+      <div><span class="tag green">SCALE</span><p>Evidência suficiente para investir mais tempo e capital.</p></div>
+      <div><span class="tag teal">MAINTAIN</span><p>Gera receita com pouca manutenção; sai da aposta ativa. Só é possível se couber no limite de 30% das horas (seção 10).</p></div>
+      <div><span class="tag purple">PIVOT</span><p>O problema é real, mas a solução, o cliente ou o modelo precisa mudar. Máximo de 2 pivôs por problema; no terceiro, KILL.</p></div>
+      <div><span class="tag red">KILL</span><p>Evidência insuficiente ou economia que não fecha.</p></div>
+      <div><span class="tag blue">SOLD</span><p>O ativo foi vendido.</p></div>
+    </div>
+    <p>Um experimento sem decisão registrada não está concluído, e nenhuma nova aposta ativa começa antes disso.</p>
+  </section>
+
+  <section id="stack">
+    <h2><span class="num">5</span>Stack tecnológica</h2>
+    <p>A tecnologia é escolhida pela velocidade de validação, não pela novidade. A stack evolui junto com a evidência.</p>
+    <dl class="slist">
+      <div class="row"><dt>Validação</dt><dd>Landing page, formulários, planilhas, no-code, entrega manual e links de pagamento. Sem código de produto.</dd></div>
+      <div class="row"><dt>MVP e produção</dt><dd>Frontend em React, backend em Go, PostgreSQL, Docker, API REST/OpenAPI, CI/CD com GitHub Actions e IA via API externa.</dd></div>
+      <div class="row"><dt>Após tração</dt><dd>Eventos (NATS/MQTT), observabilidade (OpenTelemetry) e gateway de IA próprio, apenas quando houver necessidade comprovada.</dd></div>
+    </dl>
+  </section>
+
+  <section id="metricas">
+    <h2><span class="num">6</span>Métricas por fase</h2>
+    <p>Cada fase usa os indicadores que fazem sentido para ela. Métricas financeiras antes do lançamento geram ruído, não informação.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Fase</th><th>Indicadores</th></tr></thead>
+      <tbody>
+        <tr><td>PROBLEM</td><td>Conversas realizadas, % que confirmam a dor, custo atual do problema para o cliente.</td></tr>
+        <tr><td>VALIDATION</td><td>Taxa de resposta, conversão da landing, compromissos reais obtidos.</td></tr>
+        <tr><td>MVP e LAUNCH</td><td>Ativação, tempo até o primeiro valor, uso da ação principal.</td></tr>
+        <tr><td>MONETIZATION</td><td>Clientes pagantes, MRR (receita recorrente mensal), ticket médio, CAC.</td></tr>
+        <tr><td>RETENTION</td><td>Retenção por coorte, churn, receita líquida.</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Métricas da Alltok, em todas as fases</h3>
+    <dl class="slist">
+      <div class="row"><dt>Revenue per Founder Hour</dt><dd>Receita mensal ÷ horas mensais dedicadas ao produto.</dd></div>
+      <div class="row"><dt>Time to First Revenue</dt><dd>Dias entre o início do experimento e o primeiro pagamento.</dd></div>
+      <div class="row"><dt>Horas consumidas vs. teto</dt><dd>Horas usadas na etapa atual frente ao teto definido no Ledger.</dd></div>
+      <div class="row"><dt>Horas em MAINTAIN</dt><dd>Total de horas do mês nos produtos em MAINTAIN ÷ horas totais do mês. Alerta em 25%, limite em 30%.</dd></div>
+    </dl>
+  </section>
+
+  <section id="capital">
+    <h2><span class="num">7</span>Regra de capital e tempo</h2>
+    <p>Antes de iniciar, todo experimento define dois orçamentos: em reais e em horas. O tempo do fundador é o recurso mais escasso da Alltok e precisa ser tratado como custo.</p>
+    <div class="flow">Discovery R$ 5 mil + MVP R$ 10 mil + Validação comercial R$ 5 mil = R$ 20 mil, com teto de 150 horas até o primeiro pagamento.</div>
+    <p>Se a evidência não aparecer dentro de qualquer um dos dois orçamentos, o produto vai para DECISION: parar ou pivotar.</p>
+  </section>
+
+  <section id="distribuicao">
+    <h2><span class="num">8</span>Distribuição</h2>
+    <p>A distribuição começa no dia 1, não no lançamento. Todo experimento escolhe pelo menos um canal principal: SEO, LinkedIn, X, YouTube, Reddit, comunidades, parceiros, outbound, marketplaces, integrações ou conteúdo técnico.</p>
+    <p>Build in Public pode transformar o desenvolvimento em distribuição para a marca Alltok, sem expor dados confidenciais de clientes.</p>
+  </section>
+
+  <section id="rituais">
+    <h2><span class="num">9</span>Rituais</h2>
+    <h3>Reunião semanal</h3>
+    <p>O que foi construído? O que os clientes fizeram? Quanto entrou? De onde vieram os usuários? Quantas horas foram consumidas frente ao teto? O que foi aprendido? Qual é a próxima decisão?</p>
+    <p>Quando houver descoberta paralela, a reunião cobre as duas frentes, começando pela aposta ativa. Termina com uma única prioridade principal para a semana seguinte.</p>
+    <h3>Revisão mensal de portfólio</h3>
+    <p>Revisar todos os produtos em MAINTAIN, conferindo o total de horas frente ao limite de 30%, o backlog de ideias e a aposta ativa. Confirmar se a próxima aposta já está priorizada e se algum produto em manutenção deve ser encerrado ou vendido.</p>
+  </section>
+
+  <section id="portfolio">
+    <h2><span class="num">10</span>Portfólio: One Founder, One Active Bet</h2>
+    <div class="flow">Várias ideias → uma aposta ativa → evidência → decisão → próxima aposta</div>
+    <p>As ideias ficam em um backlog com o Ledger preenchido até a etapa IDEA. Só a aposta ativa recebe tempo de desenvolvimento. Produtos em MAINTAIN recebem apenas o tempo de suporte necessário, dentro do limite descrito abaixo.</p>
+    <h3>Limite de horas para produtos em MAINTAIN</h3>
+    <p>Somados, os produtos em MAINTAIN podem consumir no máximo 30% das horas do mês. Esse tempo inclui suporte, correções, atualizações, infraestrutura e atendimento. O restante fica protegido para a aposta ativa e para a descoberta.</p>
+    <dl class="slist">
+      <div class="row"><dt>Medição</dt><dd>Cada produto em MAINTAIN registra suas horas no Ledger (campo Suporte/mês). O total é conferido na revisão mensal de portfólio.</dd></div>
+      <div class="row"><dt>Alerta em 25%</dt><dd>Ao passar de 25%, identificar o produto que mais consome horas e planejar uma ação antes de atingir o limite.</dd></div>
+      <div class="row"><dt>Acima de 30%</dt><dd>No mês seguinte, reduzir o consumo começando pelo produto com o pior Revenue per Founder Hour: automatizar, reduzir o escopo do suporte, aumentar o preço, vender (SOLD) ou encerrar (KILL). Passar do limite por dois meses seguidos obriga uma dessas decisões.</dd></div>
+      <div class="row"><dt>Entrada em MAINTAIN</dt><dd>Um produto só recebe a decisão MAINTAIN se couber no limite. Se não couber, é preciso liberar horas de outro produto ou escolher outra decisão.</dd></div>
+    </dl>
+    <p>Exemplo: com 160 horas no mês, o limite é de 48 horas para todos os produtos em MAINTAIN somados. Durante RETENTION, mesmo no pior caso (30% para MAINTAIN e 30% reservados para a aposta ativa), sobram 40% das horas para a descoberta paralela.</p>
+    <h3>Descoberta paralela durante RETENTION</h3>
+    <p>A etapa RETENTION exige observação por 60 a 90 dias, mas pouco trabalho de construção. Para não deixar esse tempo ocioso, a próxima ideia do backlog pode avançar enquanto a aposta ativa é observada, seguindo estas regras:</p>
+    <dl class="slist">
+      <div class="row"><dt>Uma ideia por vez</dt><dd>Apenas uma ideia do backlog pode entrar em descoberta paralela.</dd></div>
+      <div class="row"><dt>Só IDEA e PROBLEM</dt><dd>A ideia em descoberta pode concluir IDEA e PROBLEM, com gates e Ledger normais. VALIDATION, código e gastos ficam bloqueados até a decisão da aposta ativa.</dd></div>
+      <div class="row"><dt>Horas reservadas</dt><dd>Pelo menos 30% das horas semanais ficam reservadas para a aposta em RETENTION (acompanhamento, suporte, contato com clientes e ajustes).</dd></div>
+      <div class="row"><dt>A aposta ativa tem prioridade</dt><dd>Se a aposta em RETENTION precisar de atenção (churn acima do esperado, falha crítica, cliente em risco), a descoberta pausa sem negociação.</dd></div>
+      <div class="row"><dt>Validade da evidência</dt><dd>A evidência de PROBLEM vale por 90 dias. Depois disso, as conversas precisam ser refeitas antes de seguir para VALIDATION.</dd></div>
+    </dl>
+    <p>Quando a aposta em RETENTION chega a DECISION:</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Decisão da aposta ativa</th><th>O que acontece com a ideia em descoberta</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag green">SCALE</span></td><td>Volta ao backlog com o Ledger preservado. O tempo vai para escalar a aposta ativa.</td></tr>
+        <tr><td><span class="tag teal">MAINTAIN</span> <span class="tag red">KILL</span> <span class="tag blue">SOLD</span></td><td>Vira a nova aposta ativa e entra direto em VALIDATION, se o gate de PROBLEM foi atingido e a evidência está dentro da validade.</td></tr>
+        <tr><td><span class="tag purple">PIVOT</span></td><td>Volta ao backlog. O tempo vai para o pivô da aposta ativa, que retorna a PROBLEM.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="factory">
+    <h2><span class="num">11</span>Product Factory</h2>
+    <p>Cada produto da Alltok deve deixar componentes reutilizáveis: autenticação, billing, telemetria, notificações, gateway de IA e auditoria.</p>
+    <p><strong>Regra dos dois usos:</strong> um componente só vira infraestrutura compartilhada quando o segundo produto precisar dele. A plataforma surge dos padrões reais, não de antecipação.</p>
+  </section>
+
+  <section id="equipe">
+    <h2><span class="num">12</span>Crescimento da equipe</h2>
+    <p>Objetivo: evoluir de 1 fundador para uma equipe de 3 a 5 pessoas sem perder a velocidade de aprendizado da operação solo. Gatilhos para considerar a primeira contratação:</p>
+    <ul class="c">
+      <li>Suporte e operação consomem mais de 10 horas por semana de forma recorrente e não podem ser automatizados.</li>
+      <li>Revenue per Founder Hour está crescendo e o gargalo passou a ser capacidade, não demanda.</li>
+      <li>A receita recorrente cobre pelo menos 6 meses do custo da nova posição.</li>
+    </ul>
+    <p>Toda contratação herda este sistema: os mesmos gates, rituais e o Ledger.</p>
+  </section>
+
+  <section id="resumo">
+    <h2><span class="num">13</span>Processo em uma página</h2>
+    <div class="flow">Encontre → Converse → Valide → Construa → Venda → Meça → Decida → Repita</div>
+    <p>Padrão Alltok: produto pequeno, validação rápida, venda cedo, baixo custo, distribuição própria, automação, medição, decisão objetiva e repetição.</p>
+  </section>
+
+  <section id="ledger">
+    <h2>Product Ledger</h2>
+    <p>Preencha no início do experimento. Os campos de critério não podem ser alterados durante a etapa em andamento. O conteúdo fica salvo apenas neste navegador.</p>
+    <form id="ledgerForm" onsubmit="return false"></form>
+    <div class="ledger-actions">
+      <button class="btn danger-ghost" type="button" id="clearBtn">Limpar Ledger</button>
+      <span class="save-state" id="saveState" aria-live="polite"></span>
+    </div>
+  </section>
+
+  <footer class="doc">Alltok • Sistema de Desenvolvimento de Produtos • Versão 1.3 • Outubro de 2026</footer>
+</div>
+</main>
+
+<script>
+(function(){
+  var stages = [
+    {id:'IDEA', prazo:'1–2 dias', teto:'8', gate:'Cliente identificável, problema específico, solução possível e hipótese de monetização registrados no Ledger.',
+     body:['Perguntas obrigatórias: quem possui o problema? Qual é a dor? Com que frequência ocorre? Como é resolvida hoje? Quem paga? Quanto poderia pagar? É possível construir uma primeira versão pequena?']},
+    {id:'PROBLEM', prazo:'3–5 dias', teto:'25', gate:'≥ 10 conversas com potenciais clientes; ≥ 6 relatam a dor sem indução; solução atual mapeada; riscos regulatórios checados.',
+     body:['<strong>Fonte principal:</strong> conversas diretas com potenciais clientes e compradores. Perguntar sobre o passado e o comportamento real (“qual foi a última vez que isso aconteceu?”, “quanto custou?”, “o que vocês fizeram?”), nunca sobre intenções futuras.',
+           '<strong>Fontes complementares:</strong> reclamações, comunidades, buscas, concorrentes, reviews, processos manuais, planilhas, WhatsApp, e-mail e ferramentas existentes.',
+           '<strong>Checagem regulatória:</strong> identificar leis, normas e exigências do setor (incluindo LGPD) que possam inviabilizar ou encarecer o produto. Um bloqueio regulatório encerra o experimento independentemente da demanda.',
+           'Pergunta obrigatória: “Como esse problema é resolvido hoje?” A ausência de concorrentes não prova demanda.']},
+    {id:'VALIDATION', prazo:'14 dias', teto:'30', gate:'≥ 3 compromissos reais: pré-venda paga, sinal, carta de intenção assinada ou piloto agendado com data.',
+     body:['Validação acontece <strong>sem código de produto</strong>: landing page, proposta de valor, preço, mockup, formulário, entrega manual (concierge) e pré-venda.',
+           'Escala de evidência: curiosidade → interesse → intenção → uso → pagamento → retenção. Comportamento real vale mais que elogios; pagamento é a evidência mais forte.']},
+    {id:'MVP', prazo:'7–14 dias', teto:'60', gate:'Pelo menos 1 cliente real completa o fluxo principal (input → processamento → output) sem ajuda.',
+     body:['Estrutura: INPUT → PROCESSAMENTO → OUTPUT. Construir apenas o necessário para testar a hipótese validada.','Regra dos 14 dias: se o MVP não cabe nesse horizonte, o escopo está errado.']},
+    {id:'LAUNCH', prazo:'14 dias', teto:'30', gate:'≥ 10 usuários reais ativados (concluíram a ação principal).',
+     body:['Landing page, onboarding, pagamento, analytics, suporte e documentação mínima. Objetivo: usuários reais, não aplausos.']},
+    {id:'MONETIZATION', prazo:'30 dias', teto:'40', gate:'≥ 3 clientes pagantes pelo preço definido, sem desconto excepcional.',
+     body:['Não assumir que todo produto começa com assinatura. Modelos possíveis: Free → Trial → Pagamento único → Subscription → Business → Enterprise.','O preço é uma hipótese a ser testada, não um detalhe final.']},
+    {id:'RETENTION', prazo:'60–90 dias', teto:'—', gate:'Retenção e uso recorrente acima do critério definido no Ledger (ex.: ≥ 60% dos pagantes ativos no mês 2).',
+     body:['Após o primeiro pagamento, acompanhar ativação, retenção, uso, receita e churn. Retenção é o que separa um produto de uma venda pontual.','Durante esta etapa, a próxima ideia do backlog pode avançar em IDEA e PROBLEM, com pelo menos 30% das horas reservadas para a aposta ativa. Veja as regras na seção 10.']},
+    {id:'DECISION', prazo:'1 dia', teto:'2', gate:'Decisão registrada: SCALE, MAINTAIN, PIVOT, KILL ou SOLD.',
+     body:['Todo experimento termina aqui, seja por ter passado por todas as etapas ou por não ter atingido um gate dentro do prazo e do teto. Veja as decisões possíveis na seção 4.']}
+  ];
+
+  var icons = {
+    complete:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M14 21.41 9 16.41 10.41 15 14 18.59 21.59 11 23 12.42 14 21.41z"/><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/></svg>',
+    current:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M23.7 16a7.7 7.7 0 1 1-7.7-7.7 7.7 7.7 0 0 1 7.7 7.7z"/><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/></svg>',
+    incomplete:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/></svg>'
+  };
+
+  var progress = document.getElementById('progress');
+  var panel = document.getElementById('stagePanel');
+  var current = 0;
+
+  function render(){
+    progress.innerHTML = stages.map(function(s,i){
+      var st = i < current ? 'complete' : (i === current ? 'current' : 'incomplete');
+      return '<li><button class="step" type="button" data-i="'+i+'" data-state="'+st+'"'+(i===current?' aria-current="step"':'')+'>'+
+        '<span class="bar"></span><span class="inner"><span class="lbl">'+icons[st]+'<span>'+s.id+'</span></span><span class="sub">'+s.prazo+'</span></span></button></li>';
+    }).join('');
+    var s = stages[current];
+    panel.innerHTML = '<h3>'+(current+1)+'. '+s.id+'</h3>'+
+      '<div class="kv"><div><span class="k">Prazo</span><span class="v">'+s.prazo+'</span></div>'+
+      '<div><span class="k">Teto de horas</span><span class="v">'+s.teto+'</span></div>'+
+      '<div><span class="k">Etapa</span><span class="v">'+(current+1)+' de '+stages.length+'</span></div>'+
+      '<div class="wide"><span class="k">Gate de saída (padrão)</span><span class="v">'+s.gate+'</span></div></div>'+
+      s.body.map(function(p){return '<p>'+p+'</p>';}).join('')+
+      '<div class="stage-nav"><button class="btn secondary" type="button" id="prevStage"'+(current===0?' disabled':'')+'>Etapa anterior</button>'+
+      '<button class="btn primary" type="button" id="nextStage"'+(current===stages.length-1?' disabled':'')+'>Próxima etapa</button></div>';
+  }
+  function go(i){ current = Math.max(0, Math.min(stages.length-1, i)); render(); }
+  progress.addEventListener('click', function(e){ var b = e.target.closest('.step'); if(b) go(+b.dataset.i); });
+  panel.addEventListener('click', function(e){
+    if(e.target.id==='prevStage') go(current-1);
+    if(e.target.id==='nextStage') go(current+1);
+  });
+  render();
+
+  document.getElementById('stageTable').innerHTML = stages.map(function(s){
+    return '<tr><td>'+s.id+'</td><td>'+s.prazo+'</td><td>'+s.teto+'</td><td>'+s.gate+'</td></tr>';
+  }).join('');
+
+  // Ledger
+  var groups = [
+    ['Identificação', [['nome','Nome'],['etapa','Etapa atual','select',stages.map(function(s){return s.id;})],['papel','Papel no portfólio','select',['','Aposta ativa','Em descoberta paralela','Backlog','Manutenção']],['inicio','Data de início','date']]],
+    ['Hipótese', [['problema','Problema','textarea'],['icp','ICP (perfil de cliente)'],['proposta','Proposta de valor'],['preco','Preço'],['canal','Canal principal de distribuição'],['regulatorio','Riscos regulatórios','textarea']]],
+    ['Critérios', [['gate','Gate de saída da etapa atual','textarea'],['kill','Critério de encerramento (KILL)','textarea'],['prazo','Prazo'],['orcamento','Orçamento (R$)'],['horas','Teto de horas'],['pivos','Pivôs realizados (máx. 2)','select',['0','1','2']]]],
+    ['Resultados', [['conversas','Conversas realizadas'],['compromissos','Compromissos / pré-vendas'],['pagantes','Clientes pagantes'],['mrr','MRR'],['churn','Churn'],['cac','CAC'],['horasmes','Horas/mês'],['infra','Infraestrutura/mês'],['suporte','Suporte/mês'],['rpfh','Revenue per Founder Hour'],['ttfr','Time to First Revenue']]],
+    ['Decisão', [['status','Status','select',['','SCALE','MAINTAIN','PIVOT','KILL','SOLD']],['justificativa','Justificativa','textarea'],['proxima','Próxima decisão','textarea']]]
+  ];
+  var form = document.getElementById('ledgerForm');
+  form.innerHTML = groups.map(function(g){
+    return '<div class="ledger-group"><h3>'+g[0]+'</h3><div class="fields">'+g[1].map(function(f){
+      var id='lg-'+f[0], type=f[2]||'text', ctl;
+      if(type==='textarea') ctl='<textarea id="'+id+'" name="'+f[0]+'"></textarea>';
+      else if(type==='select') ctl='<select id="'+id+'" name="'+f[0]+'">'+f[3].map(function(o){return '<option value="'+o+'">'+(o||'Selecione')+'</option>';}).join('')+'</select>';
+      else ctl='<input id="'+id+'" name="'+f[0]+'" type="'+type+'">';
+      return '<div class="field'+(type==='textarea'?' wide':'')+'"><label for="'+id+'">'+f[1]+'</label>'+ctl+'</div>';
+    }).join('')+'</div></div>';
+  }).join('');
+
+  var KEY='alltok-ledger-v1', saveState=document.getElementById('saveState'), t;
+  try{
+    var saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+    Object.keys(saved).forEach(function(k){ var el=form.elements[k]; if(el) el.value=saved[k]; });
+  }catch(e){}
+  form.addEventListener('input', function(){
+    clearTimeout(t);
+    t=setTimeout(function(){
+      var data={}; Array.prototype.forEach.call(form.elements,function(el){ if(el.name) data[el.name]=el.value; });
+      try{ localStorage.setItem(KEY, JSON.stringify(data)); saveState.textContent='Salvo neste navegador'; }
+      catch(e){ saveState.textContent='Não foi possível salvar neste navegador'; }
+    },400);
+  });
+  document.getElementById('clearBtn').addEventListener('click', function(){
+    if(!confirm('Limpar todos os campos do Ledger?')) return;
+    form.reset();
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    saveState.textContent='Ledger limpo';
+  });
+
+  // Theme toggle
+  var root=document.documentElement;
+  try{ var th=localStorage.getItem('alltok-theme'); if(th) root.setAttribute('data-theme',th); }catch(e){}
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    var dark = root.getAttribute('data-theme') ? root.getAttribute('data-theme')==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('alltok-theme', next); }catch(e){}
+  });
+
+  // Mobile nav
+  var nav=document.getElementById('sidenav'), menuBtn=document.getElementById('menuBtn'), scrim=document.getElementById('scrim');
+  function setNav(open){ nav.classList.toggle('open',open); scrim.classList.toggle('show',open); menuBtn.setAttribute('aria-expanded',open); }
+  menuBtn.addEventListener('click', function(){ setNav(!nav.classList.contains('open')); });
+  scrim.addEventListener('click', function(){ setNav(false); });
+  nav.addEventListener('click', function(e){ if(e.target.tagName==='A') setNav(false); });
+
+  // Active section highlight
+  var links=[].slice.call(nav.querySelectorAll('a'));
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){
+        links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href')==='#'+en.target.id); });
+      }
+    });
+  },{rootMargin:'-30% 0px -60% 0px'});
+  document.querySelectorAll('section[id]').forEach(function(s){ obs.observe(s); });
+})();
+</script>
+</body>
+</html>
