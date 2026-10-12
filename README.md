@@ -1,33 +1,63 @@
-# Alltok Playbook
+<img width="2172" height="724" alt="Alltok Playbook_ Fluxo de Inovação" src="https://github.com/user-attachments/assets/5dbec48f-ec2d-4744-894b-239a14bd6b21" />
 
-Como a Alltok descobre, valida, constrói e decide sobre seus produtos.
+## Alltok Playbook
 
-Página única (one-page), em HTML/CSS/JS puro, sem build e sem dependências além da fonte IBM Plex Sans (Google Fonts).
+Processo de Desenvolvimento de Produtos
 
-**Publicado em:** https://alltok.github.io/playbook/
+Um método operacional para transformar oportunidades em produtos, validar hipóteses com o mercado e tomar decisões orientadas por evidências.
 
-## Estrutura
+## Acessar o Playbook
 
-| Arquivo | Função |
-| --- | --- |
-| `index.html` | Página completa (conteúdo, estilos e scripts) |
-| `.nojekyll` | Impede o processamento Jekyll do GitHub Pages |
-| `.github/workflows/pages.yml` | Deploy automático a cada push na `main` |
-| `LICENSE` | CC0 1.0 |
+Visão geral
 
-## Publicar
+O Alltok Playbook define o processo de desenvolvimento de produtos da Alltok, desde a identificação de oportunidades até a validação, construção, comercialização e evolução das soluções.
 
-1. Envie os arquivos para a branch `main` do repositório `alltok/playbook`.
-2. Em **Settings → Pages → Build and deployment → Source**, escolha **GitHub Actions**.
-3. A cada push na `main` o site é atualizado em `https://alltok.github.io/playbook/`.
+Seu objetivo é estabelecer um método replicável de trabalho, com ciclos curtos de experimentação, uso disciplinado de recursos e critérios objetivos para decidir o futuro de cada produto.
 
-> Alternativa sem Actions: em **Source**, escolha **Deploy from a branch**, branch `main`, pasta `/ (root)`. Nesse caso, apague a pasta `.github`.
+O processo foi concebido para reduzir desperdícios, antecipar a validação comercial e concentrar esforços nas iniciativas com maior potencial de gerar valor.
 
-## Testar localmente
+## Princípios operacionais
 
-```bash
-python3 -m http.server 8000
-# abra http://localhost:8000
-```
+Validar antes de escalar: testar as hipóteses mais relevantes antes de ampliar o investimento.
 
-O Product Ledger e o tema claro/escuro são salvos no `localStorage` do navegador.
+Construir com foco: priorizar escopo reduzido e entregas incrementais.
+
+Buscar evidências: fundamentar decisões em dados, comportamento dos usuários e resultados comerciais.
+
+Controlar recursos: acompanhar custos, tempo e retorno esperado.
+
+Distribuir desde o início: tratar aquisição de usuários e canais de distribuição como parte do desenvolvimento do produto.
+
+Decidir com objetividade: continuar, ajustar, pivotar ou encerrar iniciativas conforme critérios definidos.
+
+## O ciclo de desenvolvimento
+
+## Descobrir → Validar → Construir → Lançar → Medir → Decidir
+
+Cada etapa orienta as atividades, os critérios de passagem e as evidências necessárias para reduzir incertezas e avançar no desenvolvimento.
+
+O processo também contempla métricas, distribuição, retenção, gestão do portfólio e acompanhamento das iniciativas por meio do Product Ledger.
+
+## Aplicação
+
+O Playbook é a referência operacional para os produtos e experimentos conduzidos pela Alltok. Sua estrutura busca manter consistência entre iniciativas sem impedir adaptações às características de cada mercado ou produto.
+
+## Acesso
+
+A documentação completa está disponível em uma aplicação web de página única, desenvolvida em HTML, CSS e JavaScript, sem etapa de compilação.
+
+## Abrir o Alltok Playbook
+
+Tecnologia
+
+HTML, CSS e JavaScript
+
+IBM Plex Sans
+
+GitHub Pages para publicação
+
+Deploy automatizado via GitHub Actions, conforme configuração do repositório
+
+## Licença
+
+O repositório está publicado sob a licença Creative Commons Zero v1.0 Universal (CC0 1.0). Consulte o arquivo LICENSE para os termos aplicáveis.
